@@ -1,0 +1,11 @@
+.env
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.sqlite3
+*.pt
+*.pth
+ml/data/
+ml/saved_models/
+frontend/node_modules/
+frontend/dist/
