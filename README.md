@@ -20,7 +20,7 @@ image → validation/RGB/normalization → ResNet-18 classifier → Grad-CAM evi
 ## Design decisions
 - **Domain/dataset:** the initial taxonomy follows the [NEU Surface Defect Database](http://faculty.neu.edu.cn/yunhyan/NEU_surface_defect_database.html): normal plus crack, inclusion, patches, pitted surface, rolled-in scale, and scratches. Obtain the dataset from its official source and review its terms before use.
 - **Model:** ImageNet-initialized ResNet-18 is small enough for a developer machine while retaining convolutional features required for Grad-CAM. Classification confidence is the actual softmax output from the trained checkpoint.
-- **Localization:** Grad-CAM from `layer4` is thresholded into an evidence box and a heatmap. It is attribution, not a segmentation model; use pixel masks and a segmentation model when production localization accuracy is required.
+- **Localization:** Grad-CAM from `layer4` is thresholded into an evidence box and a heatmap. It is attribution, not a segmentation model; use pixel masks and a segmentation model when production localization accuracy is required. The anomaly score is the classifier's non-`normal` probability—not the normalized heatmap maximum.
 - **Grounding:** defect words are resolved through a synonym taxonomy (replaceable with embeddings); named regions become image rectangles and are checked against the evidence box by IoU. Score = mean claim evidence confidence. Severity is intentionally *weak* because the baseline has no trained severity target.
 
 ## Project layout
@@ -52,7 +52,7 @@ pytest backend/tests
 docker compose up --build
 ```
 
-`POST /api/v1/inspect` accepts a JPG, PNG, or WEBP multipart field named `image` (10 MB maximum). `GET /api/v1/health`, `GET /api/v1/model-info`, and `GET /api/v1/inspection/{id}` support operations and history.
+`POST /api/v1/inspect` accepts a JPG, PNG, or WEBP multipart field named `image` (10 MB and 4 million decoded pixels maximum). Its filename extension must agree with the image's decoded format. `GET /api/v1/health`, `GET /api/v1/model-info`, and `GET /api/v1/inspection/{id}` support operations and history.
 
 ```bash
 curl -F image=@surface.png http://localhost:8000/api/v1/inspect
