@@ -1,0 +1,10 @@
+services:
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    volumes: ["./ml/saved_models:/ml/saved_models"]
+    environment: {MODEL_PATH: /ml/saved_models/visionguard_resnet18.pt}
+  frontend:
+    build: ./frontend
+    ports: ["5173:80"]
+    depends_on: [backend]
