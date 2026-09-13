@@ -5,13 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import Inspection, get_inspection, init_database, save_inspection
 from .ml.model import CLASS_NAMES
-from .ml.preprocessing import InvalidImageError, load_image
+from .ml.preprocessing import InvalidImageError, load_image, validate_filename_extension
 from .schemas.inspection import InspectionResponse, ModelInfo
 from .services.inspection import inspection_service
 
 logging.basicConfig(level=logging.INFO); log=logging.getLogger(__name__)
 app=FastAPI(title="VisionGuard",version="0.1.0")
-app.add_middleware(CORSMiddleware,allow_origins=settings.allowed_origins.split(","),allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins.split(","), allow_credentials=False, allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 @app.on_event("startup")
 def startup() -> None: init_database()
 @app.get("/api/v1/health")
@@ -21,8 +21,9 @@ def model_info():
     return ModelInfo(name="ResNet-18 Grad-CAM",version="0.1.0",training_dataset="NEU Surface Defect Database",supported_defect_categories=CLASS_NAMES,metrics=inspection_service.metadata.get("metrics"),checkpoint_loaded=inspection_service.ready)
 @app.post("/api/v1/inspect",response_model=InspectionResponse)
 async def inspect(image: UploadFile=File(...)):
-    if image.content_type not in {"image/jpeg","image/png","image/webp"}: raise HTTPException(415,"Supported formats: JPG, JPEG, PNG, WEBP.")
-    try: source=load_image(await image.read(),settings.max_upload_bytes)
+    try:
+        source=load_image(await image.read(), settings.max_upload_bytes, settings.max_image_pixels, settings.max_image_dimension)
+        validate_filename_extension(image.filename, source)
     except InvalidImageError as exc: raise HTTPException(422,str(exc)) from exc
     if not inspection_service.ready: raise HTTPException(503,"No trained model checkpoint is available. Train one with ml/training/train.py before inspecting images.")
     try: defect,confidence,localization,anomaly,explanation,grounding,uncertainty=inspection_service.inspect(source)

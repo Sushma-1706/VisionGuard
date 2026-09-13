@@ -11,6 +11,10 @@ def create_model(pretrained: bool = True) -> nn.Module:
     model = resnet18(weights=weights); model.fc = nn.Linear(model.fc.in_features, len(CLASS_NAMES)); return model
 def load_checkpoint(path: Path, device: torch.device) -> tuple[nn.Module, dict]:
     if not path.exists(): raise FileNotFoundError(f"Trained checkpoint not found: {path}")
-    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    # Only tensor/primitive checkpoint contents are accepted; never unpickle
+    # arbitrary Python objects from a model file.
+    checkpoint = torch.load(path, map_location=device, weights_only=True)
+    if not isinstance(checkpoint, dict) or not isinstance(checkpoint.get("model_state_dict"), dict):
+        raise ValueError("Checkpoint does not contain a valid model state dictionary.")
     model = create_model(pretrained=False); model.load_state_dict(checkpoint["model_state_dict"]); model.to(device).eval()
     return model, checkpoint

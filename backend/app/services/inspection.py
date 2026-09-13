@@ -26,7 +26,10 @@ class InspectionService:
         if defect!="normal" and len(xs): bbox=BoundingBox(x1=int(xs.min()),y1=int(ys.min()),x2=int(xs.max()+1),y2=int(ys.max()+1))
         center=(bbox.x1+bbox.x2)/2/image.width if bbox else .5; top=(bbox.y1+bbox.y2)/2/image.height if bbox else .5
         region=("upper" if top<.5 else "bottom")+("-left" if center<.5 else "-right") if abs(top-.5)>.16 and abs(center-.5)>.16 else "center"
-        anomaly=float(cam.max()); localization=Localization(bbox=bbox,region=region,heatmap_png_base64=heatmap,overlay_png_base64=overlay)
+        # The classifier's non-normal probability is a real, bounded anomaly
+        # score. Do not derive it from a min-max normalized CAM (whose max is 1).
+        anomaly=1.0 - float(probabilities[CLASS_NAMES.index("normal")])
+        localization=Localization(bbox=bbox,region=region,heatmap_png_base64=heatmap,overlay_png_base64=overlay)
         explanation=evidence_narrator(defect,confidence,region,anomaly)
         grounding=verify_claims(explanation.claims,defect,confidence,bbox,image.width,image.height)
         level="low" if confidence>=.8 and grounding.score>=.7 else "medium" if confidence>=.55 else "high"
