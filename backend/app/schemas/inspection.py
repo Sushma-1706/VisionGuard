@@ -42,8 +42,16 @@ class Uncertainty(BaseModel):
     model_confidence: float
     grounding_confidence: float
     evidence_strength: float
+    predictive_variance: float = Field(ge=0)
+    decision: Literal["accept", "human_review"]
     level: Literal["low", "medium", "high"]
     note: str
+
+class Faithfulness(BaseModel):
+    deletion_confidence_drop: float = Field(ge=0, le=1)
+    random_deletion_confidence_drop: float = Field(ge=0, le=1)
+    evidence_fraction: float = Field(ge=0, le=1)
+    verdict: Literal["supported", "inconclusive"]
 
 class InspectionResponse(BaseModel):
     inspection_id: str
@@ -55,6 +63,7 @@ class InspectionResponse(BaseModel):
     explanation: Explanation
     grounding: Grounding
     uncertainty: Uncertainty
+    faithfulness: Faithfulness
     created_at: datetime
 
 class ModelInfo(BaseModel):

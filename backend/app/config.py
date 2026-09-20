@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     max_image_pixels: int = 4_000_000
     max_image_dimension: int = 4_096
     image_size: int = 224
+    mc_dropout_passes: int = 20
     allowed_origins: str = "http://localhost:5173"
 
     @field_validator("database_url")

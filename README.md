@@ -8,20 +8,20 @@
 ```text
 image → validation/RGB/normalization → ResNet-18 classifier → Grad-CAM evidence map
                                         ↓                         ↓
-                              defect + softmax confidence      bounding box
+                    MC-dropout mean + variance / abstention    bounding box
                                         ↓                         ↓
                       local evidence narrator (replaceable VLM interface)
                                         ↓
                       structured claims → semantic + spatial verifier
                                         ↓
-                    grounding score / unsupported claims / uncertainty → UI
+             grounding score / deletion faithfulness / uncertainty → UI
 ```
 
 ## Design decisions
 - **Domain/dataset:** the initial taxonomy follows the [NEU Surface Defect Database](http://faculty.neu.edu.cn/yunhyan/NEU_surface_defect_database.html): normal plus crack, inclusion, patches, pitted surface, rolled-in scale, and scratches. Obtain the dataset from its official source and review its terms before use.
-- **Model:** ImageNet-initialized ResNet-18 is small enough for a developer machine while retaining convolutional features required for Grad-CAM. Classification confidence is the actual softmax output from the trained checkpoint.
+- **Model:** ImageNet-initialized ResNet-18 is small enough for a developer machine while retaining convolutional features required for Grad-CAM. Its classification head includes dropout so repeated inference produces a Monte-Carlo mean and variance. The system accepts a prediction only when confidence, grounding, and stability clear conservative thresholds; otherwise it routes the sample to human review. No classifier can guarantee error-free predictions.
 - **Localization:** Grad-CAM from `layer4` is thresholded into an evidence box and a heatmap. It is attribution, not a segmentation model; use pixel masks and a segmentation model when production localization accuracy is required. The anomaly score is the classifier's non-`normal` probability—not the normalized heatmap maximum.
-- **Grounding:** defect words are resolved through a synonym taxonomy (replaceable with embeddings); named regions become image rectangles and are checked against the evidence box by IoU. Score = mean claim evidence confidence. Severity is intentionally *weak* because the baseline has no trained severity target.
+- **Grounding and faithfulness:** defect words are resolved through a synonym taxonomy (replaceable with embeddings); named regions become image rectangles and are checked against the evidence box by IoU. A deletion test masks high-attribution pixels and compares the predicted-class confidence drop with an equal-sized random mask. Severity is intentionally *weak* because the baseline has no trained severity target.
 
 ## Project layout
 ```text

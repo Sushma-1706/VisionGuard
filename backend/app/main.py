@@ -26,10 +26,10 @@ async def inspect(image: UploadFile=File(...)):
         validate_filename_extension(image.filename, source)
     except InvalidImageError as exc: raise HTTPException(422,str(exc)) from exc
     if not inspection_service.ready: raise HTTPException(503,"No trained model checkpoint is available. Train one with ml/training/train.py before inspecting images.")
-    try: defect,confidence,localization,anomaly,explanation,grounding,uncertainty=inspection_service.inspect(source)
+    try: defect,confidence,localization,anomaly,explanation,grounding,uncertainty,faithfulness=inspection_service.inspect(source)
     except Exception as exc:
         log.exception("Inspection inference failed"); raise HTTPException(500,"Inspection could not be completed.") from exc
-    response=InspectionResponse(inspection_id=str(uuid.uuid4()),status="normal" if defect=="normal" else "defective",defect_type=defect,confidence=confidence,localization=localization,anomaly_score=anomaly,explanation=explanation,grounding=grounding,uncertainty=uncertainty,created_at=datetime.now(timezone.utc))
+    response=InspectionResponse(inspection_id=str(uuid.uuid4()),status="normal" if defect=="normal" else "defective",defect_type=defect,confidence=confidence,localization=localization,anomaly_score=anomaly,explanation=explanation,grounding=grounding,uncertainty=uncertainty,faithfulness=faithfulness,created_at=datetime.now(timezone.utc))
     try: save_inspection(Inspection(id=response.inspection_id,filename=image.filename or "upload",prediction=response.status,defect_type=defect,confidence=confidence,anomaly_score=anomaly,grounding_score=grounding.score,hallucination_risk=grounding.hallucination_risk,explanation=explanation.description,result_json=response.model_dump_json()))
     except Exception: log.exception("Could not save inspection history")
     return response

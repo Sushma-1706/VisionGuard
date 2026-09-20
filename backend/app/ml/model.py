@@ -8,7 +8,10 @@ from torchvision.models import ResNet18_Weights, resnet18
 CLASS_NAMES = ["crack", "inclusion", "normal", "patches", "pitted_surface", "rolled-in_scale", "scratches"]
 def create_model(pretrained: bool = True) -> nn.Module:
     weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
-    model = resnet18(weights=weights); model.fc = nn.Linear(model.fc.in_features, len(CLASS_NAMES)); return model
+    model = resnet18(weights=weights)
+    # Dropout is deliberately retained at inference for Monte-Carlo uncertainty.
+    model.fc = nn.Sequential(nn.Dropout(p=0.25), nn.Linear(model.fc.in_features, len(CLASS_NAMES)))
+    return model
 def load_checkpoint(path: Path, device: torch.device) -> tuple[nn.Module, dict]:
     if not path.exists(): raise FileNotFoundError(f"Trained checkpoint not found: {path}")
     # Only tensor/primitive checkpoint contents are accepted; never unpickle
