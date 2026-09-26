@@ -38,7 +38,7 @@ VisionGuard is an evidence-first inspection application that classifies a metal-
 
 The application follows a **detect → localize → explain → verify** workflow. A locally trained ResNet-18 supplies the visual prediction. Grad-CAM identifies the image region that influenced that prediction. A local, template-based narrator converts only those values into structured claims, and the grounding verifier marks each claim as supported, weak, or unsupported.
 
-The supported classifier categories are `crack`, `inclusion`, `normal`, `patches`, `pitted_surface`, `rolled-in_scale`, and `scratches`. The project is intended as a baseline for inspection workflows—not as a substitute for qualified human review.
+The supported classifier categories are `crack`, `inclusion`, `patches`, `pitted_surface`, `rolled-in_scale`, and `scratches`. The project is intended as a baseline for inspection workflows—not as a substitute for qualified human review.
 
 ## Features
 
@@ -141,7 +141,6 @@ ml/data/neu/
 ├── train/
 │   ├── crack/
 │   ├── inclusion/
-│   ├── normal/
 │   ├── patches/
 │   ├── pitted_surface/
 │   ├── rolled-in_scale/
