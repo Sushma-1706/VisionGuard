@@ -1,1 +1,581 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=Manrope:wght@400;600;700;800&display=swap');*{box-sizing:border-box}body{margin:0;background:#07101b;color:#e8eef7;font-family:Manrope,sans-serif}main{max-width:1180px;margin:auto;padding:36px 24px 80px}header{border-bottom:1px solid #234057;padding-bottom:24px}.brand{font:800 28px 'DM Mono';letter-spacing:-2px}.brand span{color:#47e6b1}header p{color:#79a0bb;margin:10px 0 4px;font:12px 'DM Mono';letter-spacing:2px}header small{color:#3f627b;font:11px 'DM Mono'}.intro{margin:65px 0 24px}.intro h1{font-size:42px;margin:0}.intro p{color:#91aabe}.upload{display:flex;gap:12px;align-items:center;background:#0c1b2b;border:1px dashed #345772;padding:16px;border-radius:10px}.upload input{display:none}.upload label{flex:1;color:#9bb2c8;cursor:pointer}button{border:0;border-radius:6px;padding:10px 15px;background:#183149;color:#d5e8f4;text-transform:capitalize;font-weight:700;cursor:pointer}button.active,button:not(:disabled):hover{background:#47e6b1;color:#06201b}button:disabled{opacity:.5}.error{color:#ff9292}.grid{display:grid;grid-template-columns:1.5fr .8fr;gap:20px;margin-top:25px}.viewer,.result,.cards article{background:#0c1b2b;border:1px solid #1e3950;border-radius:10px;padding:18px}.viewer nav{margin-bottom:15px;display:flex;gap:6px}.viewer img{width:100%;max-height:510px;object-fit:contain;background:#050b12}.status{font:12px 'DM Mono';text-transform:uppercase;color:#ff8d8d}.status.normal{color:#47e6b1}.result h2{text-transform:capitalize;margin:10px 0 26px}.meter{margin:18px 0}.meter div{display:flex;justify-content:space-between;font-size:13px}.meter i{display:block;height:8px;background:#152c40;border-radius:8px;margin-top:8px;overflow:hidden}.meter em{height:100%;display:block;background:#47e6b1}.region{color:#9db5c7}.cards{display:grid;grid-template-columns:1fr 1.2fr .8fr;gap:20px;margin-top:20px}.cards h3{margin-top:0}.cards p{color:#aec0ce;font-size:14px;line-height:1.7}.claim{display:flex;gap:10px;padding:9px 0;border-top:1px solid #1c354a;color:#86d8ba}.claim.unsupported{color:#ff9292}.claim.weak{color:#f4c97c}.claim small{display:block;color:#7894a9;font-size:11px;margin-top:3px}.risk{text-transform:uppercase;font:13px 'DM Mono';padding:8px;border-radius:4px;text-align:center}.risk.low{background:#164637;color:#8be4bf}.risk.medium{background:#4b3b1c;color:#f4d278}.risk.high{background:#55282d;color:#ff9ba4}@media(max-width:760px){.grid,.cards{grid-template-columns:1fr}.upload{flex-wrap:wrap}.intro h1{font-size:31px}}
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+/* =========================
+   Global styles
+========================= */
+
+:root {
+  font-family: "Manrope", sans-serif;
+  color: #e8eef7;
+  background: #07101b;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --bg: #07101b;
+  --panel: #0c1b2b;
+  --border: #1e3950;
+  --muted: #91aabe;
+  --accent: #47e6b1;
+  --accent-dark: #06201b;
+  --danger: #ff9292;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: #e8eef7;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: 6px;
+  padding: 11px 16px;
+  background: #183149;
+  color: #d5e8f4;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+button:not(:disabled):hover {
+  background: var(--accent);
+  color: var(--accent-dark);
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+input:focus-visible,
+label:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* =========================
+   Main layout
+========================= */
+
+main {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 36px 24px 80px;
+}
+
+/* =========================
+   Header
+========================= */
+
+header {
+  border-bottom: 1px solid #234057;
+  padding-bottom: 24px;
+}
+
+.brand {
+  font-family: "DM Mono", monospace;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+.brand span {
+  color: var(--accent);
+}
+
+header p {
+  margin: 10px 0 4px;
+  color: #79a0bb;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+header small {
+  color: #3f627b;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* =========================
+   Intro
+========================= */
+
+.intro {
+  margin: 65px 0 24px;
+}
+
+.intro h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.2;
+  letter-spacing: -1.5px;
+}
+
+.intro p {
+  max-width: 700px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =========================
+   Image upload
+========================= */
+
+.upload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px dashed #345772;
+  border-radius: 10px;
+}
+
+.upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.upload label {
+  flex: 1;
+  min-width: 180px;
+  color: #9bb2c8;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.upload label:hover {
+  color: var(--accent);
+}
+
+.upload button {
+  flex-shrink: 0;
+  background: var(--accent);
+  color: var(--accent-dark);
+}
+
+.upload button:hover:not(:disabled) {
+  background: #78f2cb;
+}
+
+.error {
+  flex-basis: 100%;
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================
+   Loading state
+========================= */
+
+main > p[role="status"] {
+  margin: 20px 0;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+/* =========================
+   Results layout
+========================= */
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.viewer,
+.result,
+.cards article {
+  min-width: 0;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* =========================
+   Image viewer
+========================= */
+
+.viewer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 15px;
+}
+
+.viewer nav button {
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+.viewer nav button.active {
+  background: var(--accent);
+  color: var(--accent-dark);
+}
+
+.viewer img {
+  display: block;
+  width: 100%;
+  max-height: 510px;
+  object-fit: contain;
+  background: #050b12;
+  border-radius: 6px;
+}
+
+.viewer .region {
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+}
+
+/* =========================
+   Prediction result
+========================= */
+
+.status {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 4px;
+  background: #55282d;
+  color: #ff9ba4;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.status.normal {
+  background: #164637;
+  color: #8be4bf;
+}
+
+.result h2 {
+  margin: 14px 0 26px;
+  color: #f2f7fc;
+  font-size: 28px;
+  line-height: 1.2;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.result > small {
+  display: block;
+  margin-top: 20px;
+  color: #7894a9;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+/* =========================
+   Confidence meters
+========================= */
+
+.meter {
+  margin: 18px 0;
+}
+
+.meter > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.meter > div span {
+  color: #aec0ce;
+}
+
+.meter b {
+  color: #e8eef7;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+}
+
+.meter i {
+  display: block;
+  height: 8px;
+  margin-top: 8px;
+  overflow: hidden;
+  background: #152c40;
+  border-radius: 8px;
+}
+
+.meter em {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+  transition: width 0.4s ease;
+}
+
+/* =========================
+   Evidence region
+========================= */
+
+.region {
+  color: #9db5c7;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.region b {
+  color: #e8eef7;
+  text-transform: capitalize;
+}
+
+/* =========================
+   Explanation and verification
+========================= */
+
+.cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.cards h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.cards h3 b {
+  color: var(--accent);
+  font-family: "DM Mono", monospace;
+  font-size: 13px;
+}
+
+.cards h4 {
+  margin-bottom: 8px;
+  color: #d5e8f4;
+  font-size: 13px;
+}
+
+.cards p {
+  color: #aec0ce;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.cards small {
+  display: block;
+  color: #7894a9;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* =========================
+   Claim verification
+========================= */
+
+.claim {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid #1c354a;
+  color: #86d8ba;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.claim > b {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.claim span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.claim.unsupported {
+  color: #ff9292;
+}
+
+.claim.weak {
+  color: #f4c97c;
+}
+
+.claim small {
+  margin-top: 4px;
+}
+
+/* =========================
+   Uncertainty
+========================= */
+
+.risk {
+  padding: 9px;
+  border-radius: 4px;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.risk.low {
+  background: #164637;
+  color: #8be4bf;
+}
+
+.risk.medium {
+  background: #4b3b1c;
+  color: #f4d278;
+}
+
+.risk.high {
+  background: #55282d;
+  color: #ff9ba4;
+}
+
+/* =========================
+   Responsive layout
+========================= */
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.8fr);
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cards article:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  main {
+    padding: 24px 16px 50px;
+  }
+
+  .intro {
+    margin-top: 42px;
+  }
+
+  .grid,
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cards article:last-child {
+    grid-column: auto;
+  }
+
+  .upload {
+    align-items: stretch;
+  }
+
+  .upload label {
+    flex-basis: 100%;
+  }
+
+  .upload button {
+    width: 100%;
+  }
+
+  .viewer nav button {
+    flex: 1;
+  }
+
+  .result h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  main {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .brand {
+    font-size: 24px;
+  }
+
+  header p {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  header small {
+    font-size: 9px;
+  }
+
+  .viewer,
+  .result,
+  .cards article {
+    padding: 14px;
+  }
+
+  .viewer nav button {
+    padding: 8px;
+    font-size: 11px;
+  }
+}
+
+/* =========================
+   Reduced motion
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

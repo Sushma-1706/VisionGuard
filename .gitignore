@@ -1,11 +1,86 @@
+# =========================
+# Environment / Secrets
+# =========================
 .env
+.env.*
+!.env.example
+
+# =========================
+# Python
+# =========================
 __pycache__/
-.pytest_cache/
 *.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Python databases / local files
+# =========================
 *.sqlite3
+*.db
+
+# =========================
+# Machine Learning
+# =========================
 *.pt
 *.pth
-ml/data/
+*.ckpt
+*.onnx
+
+# Generated model files
 ml/saved_models/
+
+# =========================
+# Datasets
+# =========================
+data/
+ml/data/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Node / React / Vite
+# =========================
 frontend/node_modules/
 frontend/dist/
+frontend/.vite/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
